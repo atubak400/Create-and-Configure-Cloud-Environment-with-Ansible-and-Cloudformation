@@ -174,7 +174,6 @@ control ansible_connection=local
 
 Ansible tasks are the individual units of work in Ansible playbooks, representing actions to be executed on remote hosts, such as installing packages, copying files, or configuring services, facilitating automation and configuration management.
 
-
 > Step 15: Update your ansible.cfg:
 
 ```
@@ -195,3 +194,55 @@ host_key_checking = False
 >> host_key_checking: This parameter is set to "False," disabling host key checking. This is useful when connecting to new hosts for the first time, as it prevents Ansible from prompting for confirmation when connecting to a host with an unknown key.
 
 ![update ansible.cfg](./img/25.png)
+
+> Step 16: Log in to all virtual hosts and ping them:
+
+```
+ansible -m ping all
+```
+
+![list all hosts](./img/25.png)
+
+
+> Step 17: To retrieve and display the system information of the remote hosts:
+
+```
+ansible -m shell -a "uname" webservers:loadbalancers
+```
+>> -m shell: Specifies the Ansible module to use, in this case, the "shell" module, which allows you to execute shell commands on remote hosts.
+
+>> -a "uname": Specifies the arguments to pass to the module. In this case, it's the uname command, which prints the system information of the host.
+
+>> webservers:loadbalancers: Specifies the target hosts by using inventory groups. Ansible will execute the command on all hosts belonging to the "webservers" and "loadbalancers" groups.
+
+![update ansible.cfg](./img/25.png)
+
+## What are Ansible Modules
+
+Ansible modules are reusable, standalone scripts that perform specific tasks on remote hosts, allowing automation of various operations such as system administration, configuration management, and application deployment.
+
+Here are a few examples of Ansible modules in action:
+
+> Shell Module:
+* Execute a shell command on remote hosts.
+* ansible -m shell -a "ls -l" webservers
+
+> Copy Module:
+* Copy a file from the local machine to remote hosts.
+* ansible -m copy -a "src=/path/to/local/file.txt dest=/remote/path/" webservers
+
+>Service Module:
+* Ensure a service is running on remote hosts.
+* ansible -m service -a "name=apache2 state=started" webservers
+
+> Package Module:
+* Ensure a package is installed on remote hosts.
+* ansible -m package -a "name=nginx state=present" webservers
+
+> User Module:
+* Create a user on remote hosts.
+* ansible -m user -a "name=johndoe password=<encrypted_password>" webservers
+
+> File Module:
+* Ensure a file exists or absent on remote hosts.
+* ansible -m file -a "path=/path/to/file state=present" webservers
