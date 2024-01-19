@@ -14,23 +14,13 @@ AWS CloudFormation is a service that enables users to define and provision AWS i
 
 We will be using Cloudformation and Ansible to create and configure our Cloud Environment.
 
-
 # Project Steps
-> Step 1: Create and Activate a virtual Environment and Install Ansible using the codes below:
 
-```
-python3 -m venv myenv
-```
-
-```
-source myenv/bin/activate
-```
+> Step 1: Install Ansible using the codes below:
 
 ```
 sudo pip install ansible
 ```
-
-![Ansible](./img/1.png)
 
 > Step 2: Confirm Ansible installation using the code below
 
@@ -42,12 +32,12 @@ ansible --version
 
 > Step 3: Create Key Pair on AWS Console
 
-![Key Pair](./img/3.png) 
+![Key Pair](./img/3.png)
 
 > Step 4: Upload Template file `setup-env.yml`
 
-![template file](./img/5.png) 
-![template file](./img/6.png) 
+![template file](./img/5.png)
+![template file](./img/6.png)
 
 > Step 5: Checkout your template file infrastructure design
 
@@ -72,7 +62,6 @@ ansible --version
 > Step 8: Confirm elastic IP creation
 
 ![instances creation](./img/14.png)
-
 
 ## What is Ansible Inventory File
 
@@ -111,7 +100,6 @@ ansible -i hosts-dev --list-hosts all
 
 ![list all hosts](./img/19.png)
 
-
 ## What in is an Ansible Configuration File
 
 An Ansible configuration file, often named ansible.cfg, allows users to centrally define default settings, such as the inventory file path and SSH configuration, for maintaining consistency across Ansible playbooks and projects.
@@ -141,11 +129,9 @@ ansible --list-hosts all
 
 ![list all hosts](./img/21.png)
 
-
 > Step 13: We can target our WebServers and LoadBalancers seperately:
 
 ![list all hosts](./img/22.png)
-
 
 > Step 14: We can create aliases for our IP addresses
 
@@ -163,12 +149,12 @@ lb1 ansible_host=52.34.47.202
 control ansible_connection=local
 
 ```
+
 ![list all hosts](./img/23.png)
 
 > Step 14: We can list our hosts by their aliases
 
 ![list all hosts](./img/24.png)
-
 
 ## What are Ansible Tasks
 
@@ -180,18 +166,19 @@ Ansible tasks are the individual units of work in Ansible playbooks, representin
 # ansible.cfg
 
 [defaults]
-inventory = /hosts-dev
+inventory = ./hosts-dev
 remote_user = ec2-user
 private_key_file = ./../Devops.pem
 host_key_checking = False
 ```
->> inventory: Specifies the path to the inventory file, indicating that Ansible should use "/hosts-dev" as the inventory file, providing information about the managed hosts.
 
->> remote_user: Sets the default remote user to "ec2-user." This is the user Ansible will use when connecting to the remote hosts.
+> > inventory: Specifies the path to the inventory file, indicating that Ansible should use "/hosts-dev" as the inventory file, providing information about the managed hosts.
 
->> private_key_file: Specifies the path to the private key file for SSH authentication. In this case, it's set to "./../Devops.pem."
+> > remote_user: Sets the default remote user to "ec2-user." This is the user Ansible will use when connecting to the remote hosts.
 
->> host_key_checking: This parameter is set to "False," disabling host key checking. This is useful when connecting to new hosts for the first time, as it prevents Ansible from prompting for confirmation when connecting to a host with an unknown key.
+> > private_key_file: Specifies the path to the private key file for SSH authentication. In this case, it's set to "./../Devops.pem."
+
+> > host_key_checking: This parameter is set to "False," disabling host key checking. This is useful when connecting to new hosts for the first time, as it prevents Ansible from prompting for confirmation when connecting to a host with an unknown key.
 
 ![update ansible.cfg](./img/25.png)
 
@@ -201,21 +188,21 @@ host_key_checking = False
 ansible -m ping all
 ```
 
-![list all hosts](./img/25.png)
-
+![list all hosts](./img/26.png)
 
 > Step 17: To retrieve and display the system information of the remote hosts:
 
 ```
 ansible -m shell -a "uname" webservers:loadbalancers
 ```
->> -m shell: Specifies the Ansible module to use, in this case, the "shell" module, which allows you to execute shell commands on remote hosts.
 
->> -a "uname": Specifies the arguments to pass to the module. In this case, it's the uname command, which prints the system information of the host.
+> > -m shell: Specifies the Ansible module to use, in this case, the "shell" module, which allows you to execute shell commands on remote hosts.
 
->> webservers:loadbalancers: Specifies the target hosts by using inventory groups. Ansible will execute the command on all hosts belonging to the "webservers" and "loadbalancers" groups.
+> > -a "uname": Specifies the arguments to pass to the module. In this case, it's the uname command, which prints the system information of the host.
 
-![update ansible.cfg](./img/25.png)
+> > webservers:loadbalancers: Specifies the target hosts by using inventory groups. Ansible will execute the command on all hosts belonging to the "webservers" and "loadbalancers" groups.
+
+![update ansible.cfg](./img/27.png)
 
 ## What are Ansible Modules
 
@@ -224,25 +211,31 @@ Ansible modules are reusable, standalone scripts that perform specific tasks on 
 Here are a few examples of Ansible modules in action:
 
 > Shell Module:
-* Execute a shell command on remote hosts.
-* ansible -m shell -a "ls -l" webservers
+
+- Execute a shell command on remote hosts.
+- ansible -m shell -a "ls -l" webservers
 
 > Copy Module:
-* Copy a file from the local machine to remote hosts.
-* ansible -m copy -a "src=/path/to/local/file.txt dest=/remote/path/" webservers
 
->Service Module:
-* Ensure a service is running on remote hosts.
-* ansible -m service -a "name=apache2 state=started" webservers
+- Copy a file from the local machine to remote hosts.
+- ansible -m copy -a "src=/path/to/local/file.txt dest=/remote/path/" webservers
+
+> Service Module:
+
+- Ensure a service is running on remote hosts.
+- ansible -m service -a "name=apache2 state=started" webservers
 
 > Package Module:
-* Ensure a package is installed on remote hosts.
-* ansible -m package -a "name=nginx state=present" webservers
+
+- Ensure a package is installed on remote hosts.
+- ansible -m package -a "name=nginx state=present" webservers
 
 > User Module:
-* Create a user on remote hosts.
-* ansible -m user -a "name=johndoe password=<encrypted_password>" webservers
+
+- Create a user on remote hosts.
+- ansible -m user -a "name=johndoe password=<encrypted_password>" webservers
 
 > File Module:
-* Ensure a file exists or absent on remote hosts.
-* ansible -m file -a "path=/path/to/file state=present" webservers
+
+- Ensure a file exists or absent on remote hosts.
+- ansible -m file -a "path=/path/to/file state=present" webservers
