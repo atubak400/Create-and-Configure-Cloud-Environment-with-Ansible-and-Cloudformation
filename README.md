@@ -168,3 +168,30 @@ control ansible_connection=local
 > Step 14: We can list our hosts by their aliases
 
 ![list all hosts](./img/24.png)
+
+
+## What are Ansible Tasks
+
+Ansible tasks are the individual units of work in Ansible playbooks, representing actions to be executed on remote hosts, such as installing packages, copying files, or configuring services, facilitating automation and configuration management.
+
+
+> Step 15: Update your ansible.cfg:
+
+```
+# ansible.cfg
+
+[defaults]
+inventory = /hosts-dev
+remote_user = ec2-user
+private_key_file = ./../Devops.pem
+host_key_checking = False
+```
+>> inventory: Specifies the path to the inventory file, indicating that Ansible should use "/hosts-dev" as the inventory file, providing information about the managed hosts.
+
+>> remote_user: Sets the default remote user to "ec2-user." This is the user Ansible will use when connecting to the remote hosts.
+
+>> private_key_file: Specifies the path to the private key file for SSH authentication. In this case, it's set to "./../Devops.pem."
+
+>> host_key_checking: This parameter is set to "False," disabling host key checking. This is useful when connecting to new hosts for the first time, as it prevents Ansible from prompting for confirmation when connecting to a host with an unknown key.
+
+![update ansible.cfg](./img/25.png)
