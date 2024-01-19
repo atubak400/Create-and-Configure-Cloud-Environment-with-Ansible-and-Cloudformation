@@ -1,0 +1,149 @@
+Parameters:
+  NameOfService:
+    Description: The tag name associated with this EC2 instances.
+    Type: String
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access into the server
+    Type: AWS::EC2::KeyPair::KeyName
+Mappings:
+  RegionMap:
+    us-east-1:
+      AMI: ami-0ff8a91507f77f867
+    us-east-2:
+      AMI: ami-02e680c4540db351e
+    us-west-2:
+      AMI: ami-a0cfeed8
+Resources:
+  LnEc2InstanceWebServer1:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId:
+        Fn::FindInMap:
+        - RegionMap
+        - !Ref AWS::Region
+        - AMI
+      Tags:
+        - Key: Name
+          Value: !Join [ '-', [ !Ref NameOfService, 'webserver' ,'1'] ]
+      SecurityGroups:
+        - !Ref LnSecurityGroup
+      KeyName: !Ref KeyName
+  LnEc2InstanceWebServer2:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId:
+        Fn::FindInMap:
+        - RegionMap
+        - !Ref AWS::Region
+        - AMI
+      Tags:
+        - Key: Name
+          Value: !Join [ '-', [ !Ref NameOfService, 'webserver' ,'2'] ]
+      SecurityGroups:
+        - !Ref LnSecurityGroup
+      KeyName: !Ref KeyName
+  LnEc2InstanceLoadBalancer:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId:
+        Fn::FindInMap:
+        - RegionMap
+        - !Ref AWS::Region
+        - AMI
+      Tags:
+        - Key: Name
+          Value: !Join [ '-', [ !Ref NameOfService, 'load-balancer'] ]
+      SecurityGroups:
+        - !Ref LnSecurityGroup
+      KeyName: !Ref KeyName
+  LnSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH to client host. Created using CloudFormation template.
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: acg-ansible-course-sg
+        - Key: Description
+          Value: Security Group created for SSH and HTTP access to instances.
+  LnElasticIp1:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref LnEc2InstanceWebServer1
+  LnElasticIp2:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref LnEc2InstanceWebServer2
+  LnElasticIp3:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref LnEc2InstanceLoadBalancer
+Outputs:
+  LnPublicIpAddressInstance1:
+    Description: The Public IP address for EC2 instances
+    Value: !GetAtt
+      - LnEc2InstanceWebServer1
+      - PublicIp
+  LnPublicIpAddressInstance2:
+    Description: The Public IP address for EC2 instances
+    Value: !GetAtt
+      - LnEc2InstanceWebServer2
+      - PublicIp
+  LnPublicIpAddressLoadBalancer:
+    Description: The Public IP address for EC2 instances
+    Value: !GetAtt
+      - LnEc2InstanceLoadBalancer
+      - PublicIp
+  WebsiteLink:
+    Description: The Public DNS for the EC2 Instance
+    Value: !Sub 'http://${LnEc2InstanceLoadBalancer.PublicDnsName}'
+
+
+
+
+# This is an AWS CloudFormation template written in YAML (Yet Another Markup Language) for deploying infrastructure on Amazon Web Services (AWS). 
+
+# Parameters:
+# NameOfService: A string parameter representing the tag name associated with EC2 instances.
+# KeyName: The name of an existing EC2 KeyPair to enable SSH access into the server.
+# Mappings:
+# RegionMap: A mapping of AWS regions to corresponding AMI (Amazon Machine Image) IDs.
+# Resources:
+# LnEc2InstanceWebServer1, LnEc2InstanceWebServer2, LnEc2InstanceLoadBalancer:
+
+# These are AWS EC2 instances, each configured with a t2.micro instance type.
+# They use the AMI ID based on the AWS region specified in the RegionMap.
+# Tags are assigned based on the NameOfService parameter and the type of instance.
+# They are associated with a security group (LnSecurityGroup) and use the specified key pair (KeyName).
+# LnSecurityGroup:
+
+# An AWS EC2 Security Group allowing SSH (port 22) and HTTP (port 80) access from any IP (0.0.0.0/0).
+# Tagged with a name and description.
+# LnElasticIp1, LnElasticIp2, LnElasticIp3:
+
+# Elastic IPs associated with LnEc2InstanceWebServer1, LnEc2InstanceWebServer2, and LnEc2InstanceLoadBalancer respectively.
+# Outputs:
+# LnPublicIpAddressInstance1, LnPublicIpAddressInstance2, LnPublicIpAddressLoadBalancer:
+# Public IP addresses of the EC2 instances and the load balancer.
+# WebsiteLink:
+# The public DNS for the load balancer, forming a website link.
+# Note:
+# The template uses the Fn::FindInMap function to dynamically select the appropriate AMI based on the region.
+# The !Sub function is used to substitute variables in the WebsiteLink output.
+# This template is designed to create a simple infrastructure with two web server instances, a load balancer, and associated resources, allowing SSH and HTTP access. Adjustments can be made based on specific requirements and preferences.
+
+
+
+
+
