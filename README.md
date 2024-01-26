@@ -239,3 +239,35 @@ Here are a few examples of Ansible modules in action:
 
 - Ensure a file exists or absent on remote hosts.
 - ansible -m file -a "path=/path/to/file state=present" webservers
+
+
+## What is an Ansible Playbook
+
+An Ansible playbook is a YAML-formatted file that defines a set of tasks to be executed on remote hosts in an infrastructure automation scenario. Playbooks are a fundamental component of Ansible, an open-source automation tool. Each playbook consists of one or more plays, where each play is a set of tasks executed on a specific group of hosts. Tasks, written in YAML syntax, define the desired state of the system by specifying actions such as installing packages, configuring settings, or performing other operations. 
+
+### Example of Ansible Playbook
+#ping.yml
+```
+- name: Ping all servers
+  hosts: all
+  tasks:
+    - name: Ping all servers
+      action: ping
+```
+
+_This Ansible playbook named "Ping all servers" executes a task using the built-in ping module on all hosts specified in the inventory, checking their connectivity._
+
+### Execute an Ansible playbook
+
+> Create the necessary directorues and files.
+```
+mkdir -p playbooks/ping.yml
+```
+> paste the "Ping all servers" Ansible Playbook example code given earlier in the ping.yml
+
+> Run the code below:
+```
+ansible-playbook playbooks/ping.yml
+```
+
+# Congratulations!
